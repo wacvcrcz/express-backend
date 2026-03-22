@@ -22,3 +22,13 @@ Thumbs.db
 # Logs
 logs/
 *.log
+
+# Database
+*.db
+*.sqlite
+
+# Uploads
+uploads/
+
+# Test coverage
+coverage/
