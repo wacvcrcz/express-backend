@@ -63,8 +63,6 @@ const userSchema = new mongoose.Schema({
 });
 
 // Indexes
-userSchema.index({ username: 1 }, { unique: true });
-userSchema.index({ email: 1 }, { unique: true });
 userSchema.index({ 'devices.deviceId': 1 });
 
 // Hash password before saving
