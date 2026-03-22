@@ -48,6 +48,8 @@ const initializeSocket = (io) => {
       await User.findByIdAndUpdate(socket.userId, {
         'profile.status': 'online'
       });
+      const currentUser = await User.findById(socket.userId).select('profile');
+      const currentProfile = currentUser?.profile;
 
       // Broadcast status to rooms
       const rooms = await Room.find({ 'participants.userId': socket.userId });
@@ -57,7 +59,7 @@ const initializeSocket = (io) => {
           status: 'online',
           user: {
             username: socket.username,
-            profile: (await User.findById(socket.userId)).profile
+            profile: currentProfile
           }
         });
       });
@@ -220,13 +222,14 @@ const initializeSocket = (io) => {
         }
 
         // Notify sender
+        const currentUser = await User.findById(socket.userId).select('profile');
         io.to(roomId).emit('message:read', {
           messageId,
           readBy: socket.userId,
           timestamp: new Date(),
           user: {
             username: socket.username,
-            profile: (await User.findById(socket.userId)).profile
+            profile: currentUser?.profile
           }
         });
       } catch (error) {
@@ -240,6 +243,8 @@ const initializeSocket = (io) => {
         await User.findByIdAndUpdate(socket.userId, {
           'profile.status': status
         });
+        const currentUser = await User.findById(socket.userId).select('profile');
+        const currentProfile = currentUser?.profile;
 
         // Broadcast to user's rooms
         const rooms = await Room.find({ 'participants.userId': socket.userId });
@@ -249,7 +254,7 @@ const initializeSocket = (io) => {
             status,
             user: {
               username: socket.username,
-              profile: (await User.findById(socket.userId)).profile
+              profile: currentProfile
             }
           });
         });
@@ -276,6 +281,8 @@ const initializeSocket = (io) => {
             await User.findByIdAndUpdate(socket.userId, {
               'profile.status': 'offline'
             });
+            const currentUser = await User.findById(socket.userId).select('profile');
+            const currentProfile = currentUser?.profile;
 
             // Broadcast to rooms
             const rooms = await Room.find({ 'participants.userId': socket.userId });
@@ -285,7 +292,7 @@ const initializeSocket = (io) => {
                 status: 'offline',
                 user: {
                   username: socket.username,
-                  profile: (await User.findById(socket.userId)).profile
+                  profile: currentProfile
                 }
               });
             });
